@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>N'zi River Lodges — Maquette immersive · ARKEDIA 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Réplique Visit Côte d'Ivoire (thème clair, accent #111827) */
+    --ink:#111827;
+    --ink-soft:#374151;
+    --muted:#6B7280;
+    --line:#E5E7EB;
+    --bg:#FFFFFF;
+    --bg-soft:#F7F7F5;
+    --star:#F59E0B;
+    --wa:#16A34A;
+    /* Couche immersive (produit) */
+    --imm-a:#06B6D4;
+    --imm-b:#2563EB;
+    --imm-grad:linear-gradient(135deg,#06B6D4,#2563EB);
+    --imm-tint:#EFF9FC;
+    /* Chrome ARKEDIA */
+    --ark-navy:#050D1A;
+    --ark-navy-2:#0A1628;
+    --ark-cyan:#00F5FF;
+    --ark-body:#B8C5D4;
+    --radius:16px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+    background:var(--bg);color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  img{display:block;width:100%;height:100%;object-fit:cover}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  :focus-visible{outline:3px solid var(--imm-a);outline-offset:2px;border-radius:6px}
+
+  /* ---------- BARRE DE DÉMO ARKEDIA ---------- */
+  .ark-bar{
+    position:sticky;top:0;z-index:100;
+    background:var(--ark-navy);
+    border-bottom:1px solid rgba(0,245,255,.18);
+    color:#fff;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:10px 20px;flex-wrap:wrap;
+  }
+  .ark-id{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .ark-logo{font-family:'Sora',sans-serif;font-weight:800;font-size:.95rem;letter-spacing:.04em}
+  .ark-logo span{color:var(--ark-cyan)}
+  .ark-sub{font-size:.78rem;color:var(--ark-body);border-left:1px solid rgba(255,255,255,.15);padding-left:10px}
+  .ark-toggle{
+    display:flex;background:var(--ark-navy-2);
+    border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:3px;gap:3px;
+  }
+  .mode-btn{
+    border:none;background:transparent;color:var(--ark-body);
+    font-family:'Sora',sans-serif;font-weight:600;font-size:.78rem;
+    padding:7px 14px;border-radius:999px;transition:all .2s ease;white-space:nowrap;
+  }
+  .mode-btn.active{background:var(--ark-cyan);color:var(--ark-navy)}
+  .mode-btn:not(.active):hover{color:#fff}
+
+  /* ---------- RÉPLIQUE : HEADER PLATEFORME ---------- */
+  .site-head{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:14px 20px;border-bottom:1px solid var(--line);
+    max-width:1120px;margin:0 auto;width:100%;
+  }
+  .site-logo{font-weight:800;font-size:1.05rem;letter-spacing:-.01em}
+  .site-logo em{font-style:normal;color:#C2410C}
+  .site-nav{display:flex;gap:22px;font-size:.88rem;font-weight:600;color:var(--ink-soft)}
+  .site-lang{font-size:.85rem;font-weight:600;color:var(--muted)}
+  @media(max-width:720px){.site-nav{display:none}}
+
+  .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+  .crumbs{font-size:.8rem;color:var(--muted);padding:16px 0 4px}
+  .crumbs b{color:var(--ink);font-weight:600}
+
+  /* ---------- TITRE ---------- */
+  .title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:8px 0 16px;flex-wrap:wrap}
+  h1{font-size:1.85rem;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+  .meta-line{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap;font-size:.85rem;color:var(--ink-soft)}
+  .chip{background:var(--bg-soft);border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-weight:600}
+  .rating{font-weight:700}.rating .st{color:var(--star)}
+  .price-top{text-align:right}
+  .price-top .p{font-size:1.3rem;font-weight:800}
+  .price-top .u{font-size:.78rem;color:var(--muted)}
+
+  /* Badge produit — visible en mode immersif */
+  .badge-3d{
+    display:inline-flex;align-items:center;gap:6px;
+    background:var(--imm-grad);color:#fff;
+    border-radius:999px;padding:5px 12px;
+    font-size:.78rem;font-weight:700;letter-spacing:.01em;
+    box-shadow:0 4px 14px rgba(37,99,235,.28);
+  }
+  .badge-3d .cube{font-size:.85rem;line-height:1}
+
+  /* ---------- GALERIE ---------- */
+  .gallery{
+    display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:190px 190px;
+    gap:10px;border-radius:var(--radius);overflow:hidden;
+  }
+  .g-item{position:relative;background:var(--bg-soft);overflow:hidden}
+  .g-item:first-child{grid-row:span 2}
+  .g-item.ph::after{
+    content:"📷";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-size:1.6rem;background:linear-gradient(135deg,#E8EDE9,#D8E2DC);
+  }
+  .g-count{
+    position:absolute;right:10px;bottom:10px;background:rgba(17,24,39,.82);color:#fff;
+    font-size:.72rem;font-weight:600;border-radius:8px;padding:5px 10px;
+  }
+  @media(max-width:720px){
+    .gallery{grid-template-columns:1fr 1fr;grid-template-rows:170px 110px}
+    .g-item:first-child{grid-column:span 2;grid-row:span 1}
+    .g-item:nth-child(4),.g-item:nth-child(5){display:none}
+  }
+
+  /* ---------- SECTION VISITE IMMERSIVE ---------- */
+  .tour-card{
+    margin-top:26px;background:var(--imm-tint);
+    border:1px solid #CDEDF4;border-radius:20px;padding:22px;
+  }
+  .eyebrow{
+    font-family:'Sora',sans-serif;font-size:.68rem;font-weight:700;
+    letter-spacing:.14em;text-transform:uppercase;
+    background:var(--imm-grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .tour-card h2{font-size:1.45rem;font-weight:800;letter-spacing:-.02em;margin:6px 0 4px}
+  .tour-card .lead{font-size:.92rem;color:var(--ink-soft);max-width:640px}
+  .tour-frame{
+    margin-top:16px;position:relative;border-radius:14px;overflow:hidden;
+    background:#0B1220;aspect-ratio:16/9;
+    box-shadow:0 18px 44px rgba(13,71,161,.18);
+  }
+  .tour-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .tour-foot{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    margin-top:12px;flex-wrap:wrap;
+  }
+  .tour-note{font-size:.78rem;color:var(--muted);max-width:560px;line-height:1.55}
+  .tour-note b{color:var(--ink)}
+  .tour-open{
+    display:inline-flex;align-items:center;gap:7px;
+    font-size:.8rem;font-weight:700;color:#1D4ED8;
+    border:1px solid #BFDBFE;background:#fff;border-radius:999px;padding:8px 14px;
+    transition:all .15s ease;
+  }
+  .tour-open:hover{background:#EFF6FF}
+  .cobrand{
+    display:inline-flex;align-items:center;gap:7px;margin-top:12px;
+    font-size:.72rem;font-weight:600;color:var(--ink-soft);
+    background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 12px;
+  }
+  .cobrand .dot{width:7px;height:7px;border-radius:50%;background:var(--imm-grad)}
+
+  /* ---------- CORPS 2 COLONNES ---------- */
+  .cols{display:grid;grid-template-columns:1fr 340px;gap:34px;margin-top:30px;align-items:start}
+  @media(max-width:900px){.cols{grid-template-columns:1fr}}
+  .section{padding:22px 0;border-top:1px solid var(--line)}
+  .section h3{font-size:1.15rem;font-weight:800;letter-spacing:-.01em;margin-bottom:12px}
+  .section p{font-size:.92rem;line-height:1.7;color:var(--ink-soft)}
+  .amenities{display:flex;flex-wrap:wrap;gap:8px}
+  .amenities .chip{font-size:.8rem;font-weight:500;color:var(--ink-soft)}
+
+  .room{
+    display:grid;grid-template-columns:200px 1fr;gap:18px;
+    border:1px solid var(--line);border-radius:var(--radius);
+    overflow:hidden;margin-bottom:16px;background:#fff;
+  }
+  .room .ph-img{position:relative;min-height:160px;background:var(--bg-soft)}
+  .room .ph-img.ph::after{content:"📷";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem;background:linear-gradient(135deg,#E8EDE9,#D8E2DC)}
+  .room .body{padding:16px 18px 16px 0;display:flex;flex-direction:column;gap:8px}
+  .room h4{font-size:1rem;font-weight:800}
+  .room .desc{font-size:.83rem;color:var(--muted);line-height:1.55}
+  .room .foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;gap:10px;flex-wrap:wrap}
+  .room .rp{font-weight:800}.room .rp small{font-weight:500;color:var(--muted)}
+  .btn-dark{
+    background:var(--ink);color:#fff;border:none;border-radius:10px;
+    font-weight:700;font-size:.85rem;padding:10px 18px;transition:opacity .15s;
+  }
+  .btn-dark:hover{opacity:.85}
+  @media(max-width:640px){
+    .room{grid-template-columns:1fr}
+    .room .body{padding:0 16px 16px}
+    .room .ph-img{min-height:150px}
+  }
+
+  /* ---------- SIDEBAR RÉSERVATION ---------- */
+  .book{
+    position:sticky;top:76px;
+    border:1px solid var(--line);border-radius:20px;
+    box-shadow:0 12px 34px rgba(17,24,39,.08);
+    padding:20px;background:#fff;
+  }
+  .book .p{font-size:1.35rem;font-weight:800}
+  .book .p small{font-size:.8rem;font-weight:500;color:var(--muted)}
+  .book .r{font-size:.8rem;color:var(--ink-soft);margin-top:2px}
+  .fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}
+  .field{border:1px solid var(--line);border-radius:10px;padding:9px 11px}
+  .field label{display:block;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  .field div{font-size:.85rem;font-weight:600;margin-top:2px}
+  .field.full{grid-column:span 2}
+  .btn-book{width:100%;background:var(--ink);color:#fff;border:none;border-radius:12px;font-weight:800;font-size:.92rem;padding:13px;transition:opacity .15s}
+  .btn-book:hover{opacity:.85}
+  .btn-wa{
+    width:100%;margin-top:9px;background:#fff;color:var(--wa);
+    border:1.5px solid #BBE5C8;border-radius:12px;
+    font-weight:700;font-size:.86rem;padding:11px;transition:background .15s;
+  }
+  .btn-wa:hover{background:#F0FBF4}
+  .book .free{font-size:.72rem;color:var(--muted);text-align:center;margin-top:9px}
+
+  /* Module 3D dans la sidebar (mode immersif) */
+  .side-3d{
+    margin-top:14px;border-radius:14px;padding:14px 15px;
+    background:linear-gradient(135deg,rgba(6,182,212,.10),rgba(37,99,235,.10));
+    border:1px solid #CDEDF4;
+  }
+  .side-3d .t{display:flex;align-items:center;gap:8px;font-weight:800;font-size:.88rem}
+  .side-3d .t .cube{background:var(--imm-grad);color:#fff;border-radius:8px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:.8rem}
+  .side-3d p{font-size:.76rem;color:var(--ink-soft);margin:7px 0 10px;line-height:1.5}
+  .side-3d a{
+    display:block;text-align:center;background:var(--imm-grad);color:#fff;
+    border-radius:10px;font-weight:700;font-size:.82rem;padding:10px;
+  }
+
+  /* ---------- VISION CATALOGUE ---------- */
+  .catalog{margin-top:36px;background:var(--bg-soft);border-radius:24px;padding:28px 24px}
+  .catalog h2{font-size:1.4rem;font-weight:800;letter-spacing:-.02em;margin:6px 0 4px}
+  .catalog .lead{font-size:.9rem;color:var(--ink-soft);max-width:620px}
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 20px}
+  .f-chip{background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 15px;font-size:.82rem;font-weight:600;color:var(--ink-soft)}
+  .f-chip.on{background:var(--imm-grad);border-color:transparent;color:#fff;box-shadow:0 4px 14px rgba(37,99,235,.25)}
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:820px){.cards{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .card .img{position:relative;height:130px}
+  .card .img .b3{position:absolute;left:10px;top:10px;font-size:.68rem;padding:4px 10px}
+  .card .g1{background:linear-gradient(135deg,#134E4A,#0E7490)}
+  .card .g2{background:linear-gradient(135deg,#7C2D12,#B45309)}
+  .card .g3{background:linear-gradient(135deg,#1E3A5F,#3B6E8F)}
+  .card .body{padding:13px 15px 15px}
+  .card h4{font-size:.92rem;font-weight:800}
+  .card .m{font-size:.76rem;color:var(--muted);margin-top:3px}
+  .card .f{display:flex;justify-content:space-between;align-items:center;margin-top:9px;font-size:.8rem}
+  .card .f b{font-weight:800}
+  .kpi{
+    margin-top:18px;font-size:.78rem;color:var(--ink-soft);
+    background:#fff;border:1px dashed #A9DCE8;border-radius:12px;padding:11px 14px;line-height:1.55;
+  }
+  .kpi b{color:var(--ink)}
+
+  /* ---------- FOOTER MAQUETTE ---------- */
+  .maq-foot{
+    margin-top:44px;background:var(--ark-navy);color:var(--ark-body);
+    font-size:.74rem;line-height:1.6;padding:20px;text-align:center;
+  }
+  .maq-foot b{color:#fff;font-family:'Sora',sans-serif}
+  .maq-foot span{color:var(--ark-cyan)}
+
+  /* ---------- MÉCANIQUE AVANT / APRÈS ---------- */
+  .only-imm{display:none}
+  body.imm .only-imm{display:block}
+  body.imm .only-imm.inline{display:inline-flex}
+  @media (prefers-reduced-motion: no-preference){
+    body.imm .reveal{animation:up .45s ease both}
+    @keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  }
+  .hint{
+    max-width:1120px;margin:14px auto 0;padding:0 20px;
+  }
+  .hint .in{
+    background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;
+    font-size:.8rem;color:#92400E;padding:10px 14px;
+  }
+  body.imm .hint{display:none}
+</style>
+</head>
+<body>
+
+<!-- BARRE DE DÉMO ARKEDIA -->
+<div class="ark-bar">
+  <div class="ark-id">
+    <div class="ark-logo">ARKEDIA <span>3D</span></div>
+    <div class="ark-sub">Maquette · Fiche N'zi River Lodges — visitcotedivoire.com</div>
+  </div>
+  <div class="ark-toggle" role="group" aria-label="Mode de la maquette">
+    <button class="mode-btn active" data-mode="off">Fiche actuelle</button>
+    <button class="mode-btn" data-mode="on">Avec couche immersive</button>
+  </div>
+</div>
+
+<div class="hint"><div class="in">👆 Basculez sur <b>« Avec couche immersive »</b> pour voir la fiche enrichie.</div></div>
+
+<!-- HEADER PLATEFORME (réplique) -->
+<header class="site-head">
+  <div class="site-logo">Visit<em>•</em>Côte d'Ivoire</div>
+  <nav class="site-nav">
+    <a href="#">Accueil</a><a href="#">Découvrez</a><a href="#">Planifier</a><a href="#">SnapiFood</a>
+  </nav>
+  <div class="site-lang">FR 🇨🇮</div>
+</header>
+
+<main class="wrap">
+  <div class="crumbs">Accueil / Hôtels / <b>N'zi River Lodges</b></div>
+
+  <!-- TITRE -->
+  <div class="title-row">
+    <div>
+      <h1>N'zi River Lodges</h1>
+      <div class="meta-line">
+        <span class="chip">🌿 Éco-Lodge</span>
+        <span>Bouaké</span>
+        <span class="rating"><span class="st">★</span> 4.9 <span style="color:var(--muted);font-weight:500">(98 avis)</span></span>
+        <span class="badge-3d only-imm inline reveal"><span class="cube">◈</span> Visite immersive 3D</span>
+      </div>
+    </div>
+    <div class="price-top">
+      <div class="p">100 000 FCFA</div>
+      <div class="u">/ nuit · à partir de</div>
+    </div>
+  </div>
+
+  <!-- GALERIE (photos réelles de la fiche) -->
+  <div class="gallery">
+    <div class="g-item"><img src="https://kcxasiklhaklyutfowsw.supabase.co/storage/v1/object/public/images/hotels/1773145145514-b8gc11e.png" alt="N'zi River Lodges" loading="lazy" onerror="this.parentElement.classList.add('ph');this.remove()"></div>
+    <div class="g-item"><img src="https://kcxasiklhaklyutfowsw.supabase.co/storage/v1/object/public/images/hotels/1773142977497-yoawjqi.png" alt="Lodge" loading="lazy" onerror="this.parentElement.classList.add('ph');this.remove()"></div>
+    <div class="g-item"><img src="https://kcxasiklhaklyutfowsw.supabase.co/storage/v1/object/public/images/hotels/1773142979258-zpu64u7.png" alt="Nature" loading="lazy" onerror="this.parentElement.classList.add('ph');this.remove()"></div>
+    <div class="g-item"><img src="https://kcxasiklhaklyutfowsw.supabase.co/storage/v1/object/public/images/hotels/1773145198381-8agkxl4.png" alt="Chambre" loading="lazy" onerror="this.parentElement.classList.add('ph');this.remove()"></div>
+    <div class="g-item">
+      <img src="https://kcxasiklhaklyutfowsw.supabase.co/storage/v1/object/public/images/hotels/1773145351771-e3poknk.png" alt="Terrasse" loading="lazy" onerror="this.parentElement.classList.add('ph');this.remove()">
+      <div class="g-count">1 / 20</div>
+    </div>
+  </div>
+
+  <!-- ===== COUCHE IMMERSIVE : LA VISITE ===== -->
+  <section class="tour-card only-imm reveal" id="visite3d" aria-label="Visite immersive">
+    <div class="eyebrow">Nouveau · Couche immersive</div>
+    <h2>Explorez le lodge avant de réserver</h2>
+    <p class="lead">Le visiteur se déplace librement de la passerelle aux chambres sur pilotis, comme s'il y était. La fiche ne décrit plus le lieu : elle le fait vivre.</p>
+    <div class="tour-frame">
+      <iframe id="tourFrame" data-src="https://realsee.ai/2VPPWjdw" title="Visite immersive de démonstration" allow="fullscreen; gyroscope; accelerometer; xr-spatial-tracking" allowfullscreen loading="lazy"></iframe>
+    </div>
+    <div class="tour-foot">
+      <p class="tour-note"><b>Démo d'intégration</b> — African Queen Lodge, Assinie (production ARKEDIA 3D). La visite N'zi River Lodges est produite et intégrée à l'identique, sans modification de votre site.</p>
+      <a class="tour-open" href="https://realsee.ai/2VPPWjdw" target="_blank" rel="noopener">Plein écran ↗</a>
+    </div>
+    <div class="cobrand"><span class="dot"></span> Expérience immersive · Visit Côte d'Ivoire × ARKEDIA 3D</div>
+  </section>
+
+  <!-- CORPS -->
+  <div class="cols">
+    <div>
+      <section class="section" style="border-top:none">
+        <h3>À propos</h3>
+        <p>Niché au cœur de la <b>Réserve Naturelle Volontaire du N'zi</b>, N'zi River Lodges se distingue par son ambiance unique, alliant tradition et modernité. Les lodges sur pilotis, reliés par des passerelles suspendues, offrent une immersion totale dans la nature environnante — un havre de paix où observer la faune ivoirienne depuis sa terrasse.</p>
+      </section>
+
+      <section class="section">
+        <h3>Équipements</h3>
+        <div class="amenities">
+          <span class="chip">Parking</span><span class="chip">Terrasse privative</span>
+          <span class="chip">Terrasse extérieure</span><span class="chip">Activités &amp; Bien-Être</span>
+          <span class="chip">Immersion en Pleine Nature</span><span class="chip">Cabane dans les Arbres</span>
+          <span class="chip">Activités en Forêt</span>
+        </div>
+      </section>
+
+      <section class="section">
+        <h3>Chambres disponibles</h3>
+        <div class="room">
+          <div class="ph-img"><img src="https://kcxasiklhaklyutfowsw.supabase.co/storage/v1/object/public/images/hotels/1773143787853-v76rfcf.jpg" alt="Chambre Double" loading="lazy" onerror="this.parentElement.classList.add('ph');this.remove()"></div>
+          <div class="body">
+            <h4>Chambres Double · 40 m²</h4>
+            <p class="desc">Structures sur pilotis reliées par des passerelles suspendues, terrasse personnelle intégrée, décoration alliant dynamisme africain et lignes épurées.</p>
+            <div class="foot"><span class="rp">100 000 FCFA <small>/ nuit · 2 pers.</small></span><button class="btn-dark">Réserver</button></div>
+          </div>
+        </div>
+        <div class="room">
+          <div class="ph-img"><img src="https://kcxasiklhaklyutfowsw.supabase.co/storage/v1/object/public/images/hotels/1773144321612-36f2ya1.jpg" alt="Suite" loading="lazy" onerror="this.parentElement.classList.add('ph');this.remove()"></div>
+          <div class="body">
+            <h4>Suite · 70 m²</h4>
+            <p class="desc">Douche extérieure privée, baignoire intérieure et balcon d'observation surélevé avec vue sur le barrage où les animaux viennent s'abreuver.</p>
+            <div class="foot"><span class="rp">150 000 FCFA <small>/ nuit · 2 pers.</small></span><button class="btn-dark">Réserver</button></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="book">
+      <div class="p">100 000 FCFA <small>/ nuit</small></div>
+      <div class="r">★ 4.9 · 98 avis</div>
+      <div class="fields">
+        <div class="field"><label>Arrivée</label><div>12 sept. 2026</div></div>
+        <div class="field"><label>Départ</label><div>14 sept. 2026</div></div>
+        <div class="field full"><label>Voyageurs</label><div>2 voyageurs</div></div>
+      </div>
+      <button class="btn-book">Réserver maintenant</button>
+      <button class="btn-wa">Contacter sur WhatsApp</button>
+      <div class="free">Réservation gratuite · Confirmation immédiate</div>
+
+      <div class="side-3d only-imm reveal">
+        <div class="t"><span class="cube">◈</span> Visitez avant de réserver</div>
+        <p>Parcourez les chambres, la passerelle et les terrasses en immersion totale, depuis votre téléphone.</p>
+        <a href="#visite3d">Explorer en 3D</a>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ===== COUCHE IMMERSIVE : VISION CATALOGUE ===== -->
+  <section class="catalog only-imm reveal" aria-label="Vision catalogue">
+    <div class="eyebrow">Vision catalogue</div>
+    <h2>À l'échelle des 50+ établissements</h2>
+    <p class="lead">Le badge devient un filtre. La plateforme devient la première d'Afrique de l'Ouest où l'on visite les hôtels avant de réserver.</p>
+    <div class="filters">
+      <span class="f-chip">Tous</span>
+      <span class="f-chip on">◈ Visite 3D</span>
+      <span class="f-chip">Éco-lodge</span>
+      <span class="f-chip">Plage</span>
+      <span class="f-chip">Abidjan</span>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="img g1"><span class="badge-3d b3"><span class="cube">◈</span> 3D</span></div>
+        <div class="body"><h4>N'zi River Lodges</h4><div class="m">Bouaké · Éco-Lodge</div><div class="f"><span>★ 4.9</span><b>100 000 FCFA</b></div></div>
+      </div>
+      <div class="card">
+        <div class="img g2"><span class="badge-3d b3"><span class="cube">◈</span> 3D</span></div>
+        <div class="body"><h4>Coconut Grove Lodge</h4><div class="m">Île Boulay · Abidjan</div><div class="f"><span>★ 4.8</span><b>110 000 FCFA</b></div></div>
+      </div>
+      <div class="card">
+        <div class="img g3"><span class="badge-3d b3"><span class="cube">◈</span> 3D</span></div>
+        <div class="body"><h4>Le Refuge du Bandama</h4><div class="m">Tiassalé · Nature</div><div class="f"><span>★ 5.0</span><b>110 000 FCFA</b></div></div>
+      </div>
+    </div>
+    <div class="kpi"><b>Pilote mesuré :</b> temps passé par fiche, clics WhatsApp, réservations — avant / après intégration. Les établissements financent leur visite ; la plateforme encaisse la différenciation.</div>
+  </section>
+</main>
+
+<footer class="maq-foot">
+  <b>Maquette de démonstration confidentielle — ARKEDIA <span>3D</span></b> · Juillet 2026<br>
+  Photos et contenus © Visit Côte d'Ivoire (visitcotedivoire.com), utilisés à titre d'illustration. Ne pas diffuser.
+</footer>
+
+<script>
+  const btns=document.querySelectorAll('.mode-btn');
+  const frame=document.getElementById('tourFrame');
+  btns.forEach(b=>b.addEventListener('click',()=>{
+    const on=b.dataset.mode==='on';
+    document.body.classList.toggle('imm',on);
+    btns.forEach(x=>x.classList.toggle('active',x===b));
+    if(on&&frame&&!frame.src){frame.src=frame.dataset.src;}
+    if(on){document.getElementById('visite3d')?.scrollIntoView({behavior:'smooth',block:'center'});}
+  }));
+</script>
+</body>
+</html>
